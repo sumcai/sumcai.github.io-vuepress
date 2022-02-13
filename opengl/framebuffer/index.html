@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Framebuffer用法 | IOGL</title>
+<meta name="generator" content="VuePress 1.8.0">
+<link rel="icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-alpha/dist/katex.min.css">
+    <link rel="stylesheet" href="https://at.alicdn.com/t/font_2937112_484nc9f03bi.css">
+<meta name="description" content="这里将深入探讨相关技术，包括行业动态，架构设计，设计模式，框架使用，源码分析等。">
+    <meta name="image" content="http://www.iogl.cn/assets/1640529248087.png">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Framebuffer用法">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="http://www.iogl.cn/assets/1640529248087.png">
+    <meta property="og:url" content="http://www.iogl.cn/02.%E7%AC%94%E8%AE%B0/01.OpenGL%E6%8A%80%E6%9C%AF/09.Framebuffer%E7%94%A8%E6%B3%95.html">
+    <meta property="og:site_name" content="iogl.cn">
+    <meta property="article:published_time" content="2021-12-26T20:14:37.000Z">
+    <meta property="article:tag" content="opengl基础">
+    <meta itemprop="name" content="Framebuffer用法">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://www.iogl.cn/assets/1640529248087.png">
+    <meta name="keywords" content="个人技术博客,算法,数据结构">
+    <meta name="theme-color" content="#11a8cd">
+<link rel="preload" href="/assets/css/0.styles.b17c35c4.css" as="style"><link rel="preload" href="/assets/js/app.29891e4d.js" as="script"><link rel="preload" href="/assets/js/2.a7472eed.js" as="script"><link rel="preload" href="/assets/js/4.705083b4.js" as="script"><link rel="preload" href="/assets/js/29.0c6214c9.js" as="script">
+<link rel="stylesheet" href="/assets/css/0.styles.b17c35c4.css">
+</head>
+<body class="theme-mode-light">
+<div id="app" data-server-rendered="true"><div class="theme-container sidebar-open have-rightmenu"><header class="navbar blur"><div title="目录" class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/img/avatar.png" alt="IOGL" class="logo"> <span class="site-name can-hide"></span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">🏠首页</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="📚笔记" class="dropdown-title"><a href="/site/note/" class="link-title">📚笔记</a> <span class="title" style="display:none;">📚笔记</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/opengl/" class="nav-link router-link-active">OpenGL技术</a></li><li class="dropdown-item"><!----> <a href="/vulkan/" class="nav-link">Vulkan技术</a></li><li class="dropdown-item"><!----> <a href="/physics/" class="nav-link">物理引擎技术</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="📖教程" class="dropdown-title"><a href="/site/tutorial/" class="link-title">📖教程</a> <span class="title" style="display:none;">📖教程</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/site/tutorial/learnopengl/" class="nav-link">OpenGL中文教程</a></li></ul></div></div><div class="nav-item"><a href="/site/tips/" class="nav-link">✏️碎片</a></div><div class="nav-item"><a href="/site/msgboard/" class="nav-link">📋留言板</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="🧭导航" class="dropdown-title"><a href="/archives/" class="link-title">🧭导航</a> <span class="title" style="display:none;">🧭导航</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/categories/" class="nav-link">📂分类</a></li><li class="dropdown-item"><!----> <a href="/tags/" class="nav-link">🔖标签</a></li><li class="dropdown-item"><!----> <a href="/archives/" class="nav-link">⌚时间线</a></li><li class="dropdown-item"><!----> <a href="/site/favorite/" class="nav-link">❤️本站收藏</a></li><li class="dropdown-item"><!----> <a href="/site/friend/" class="nav-link">🔗友情链接</a></li></ul></div></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <div class="sidebar-hover-trigger"></div> <aside class="sidebar" style="display:none;"><div class="blogger"><img src="/img/avatar.jpg"> <div class="blogger-info"><h3>sumcai's blog</h3> <span></span></div></div> <nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">🏠首页</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="📚笔记" class="dropdown-title"><a href="/site/note/" class="link-title">📚笔记</a> <span class="title" style="display:none;">📚笔记</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/opengl/" class="nav-link router-link-active">OpenGL技术</a></li><li class="dropdown-item"><!----> <a href="/vulkan/" class="nav-link">Vulkan技术</a></li><li class="dropdown-item"><!----> <a href="/physics/" class="nav-link">物理引擎技术</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="📖教程" class="dropdown-title"><a href="/site/tutorial/" class="link-title">📖教程</a> <span class="title" style="display:none;">📖教程</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/site/tutorial/learnopengl/" class="nav-link">OpenGL中文教程</a></li></ul></div></div><div class="nav-item"><a href="/site/tips/" class="nav-link">✏️碎片</a></div><div class="nav-item"><a href="/site/msgboard/" class="nav-link">📋留言板</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="🧭导航" class="dropdown-title"><a href="/archives/" class="link-title">🧭导航</a> <span class="title" style="display:none;">🧭导航</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/categories/" class="nav-link">📂分类</a></li><li class="dropdown-item"><!----> <a href="/tags/" class="nav-link">🔖标签</a></li><li class="dropdown-item"><!----> <a href="/archives/" class="nav-link">⌚时间线</a></li><li class="dropdown-item"><!----> <a href="/site/favorite/" class="nav-link">❤️本站收藏</a></li><li class="dropdown-item"><!----> <a href="/site/friend/" class="nav-link">🔗友情链接</a></li></ul></div></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>OpenGL技术</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/opengl/resource/" class="sidebar-link">收集的OpenGL资源</a></li><li><a href="/opengl/env/" class="sidebar-link">搭建OpenGL开发环境</a></li><li><a href="/opengl/vertex/" class="sidebar-link">浅谈VAO、VBO、VEO</a></li><li><a href="/opengl/coordinate/" class="sidebar-link">OpenGL中的坐标系统</a></li><li><a href="/opengl/texture/" class="sidebar-link">OpenGL纹理</a></li><li><a href="/opengl/mvp/" class="sidebar-link">MVP变换坐标</a></li><li><a href="/opengl/stencil/" class="sidebar-link">Stencil用法</a></li><li><a href="/opengl/blend/" class="sidebar-link">Blend用法</a></li><li><a href="/opengl/framebuffer/" aria-current="page" class="active sidebar-link">Framebuffer用法</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/opengl/framebuffer/#framebuffer用法" class="sidebar-link">Framebuffer用法</a></li><li class="sidebar-sub-header"><a href="/opengl/framebuffer/#示例代码" class="sidebar-link">示例代码</a></li></ul></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>物理引擎技术</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Vulkan技术</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <div><main class="page"><div class="theme-vdoing-wrapper "><div class="articleInfo-wrap" data-v-0aeb3626><div class="articleInfo" data-v-0aeb3626><ul class="breadcrumbs" data-v-0aeb3626><li data-v-0aeb3626><a href="/" title="首页" class="iconfont icon-home router-link-active" data-v-0aeb3626></a></li> <li data-v-0aeb3626><a href="/site/note" title="笔记-目录页" data-v-0aeb3626>笔记</a></li> <li data-v-0aeb3626><a href="/site/note/#OpenGL技术" title="笔记#OpenGL技术" data-v-0aeb3626>OpenGL技术</a></li> <!----></ul> <div class="info" data-v-0aeb3626><div title="作者" class="author iconfont icon-touxiang" data-v-0aeb3626><a href="https://github.com/sumcai" target="_blank" title="作者" class="beLink" data-v-0aeb3626>sumcai</a></div> <div title="创建时间" class="date iconfont icon-riqi" data-v-0aeb3626><a href="javascript:;" data-v-0aeb3626>2021-12-26</a></div> <div title="统计" class="date iconfont icon-smceye1" data-v-0aeb3626><span id="/opengl/framebuffer" data-flag-title="Framebuffer用法" class="leancloud_visitors" data-v-0aeb3626><a class="leancloud-visitors-count" data-v-0aeb3626></a></span></div> <!----></div></div></div> <!----> <div class="content-wrapper"><div class="right-menu-wrapper"><div class="right-menu-margin"><div class="right-menu-content"></div></div></div> <h1><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAGPklEQVRoQ+2Yf2xdZRnHv9/nPee0HXQE1q1m7e2QdVs7Jmp0MUowjAAJIYogxoDGBP7ABENUhKjgPxhMMKIhMUQw/OEfasKiidM/MFGjUUgYIcZo3e1k/Lq3TBgJc21t13PO+zzmnPXe3t7e257Std1Mz3/3nvd9nufzfJ/3ed/zEuf5w/M8fmwArLeCGwpsKLDCDPz/l1C5D7vNBTvgORGlyeRUB964ooKTK0lcuQ9bohTbYxd0I7BLEPuR4Tfx2ruxuagCR/vRpxLeWDNM1SkT2WSmJ1L6v7+vglcJWBHHBvBIP3YK3PshskUTnZJQNmVz1TSNqv5nu4CZIrYax7QFqPaja1wxJEG4vzbBVD1FXO23Qk9C/R8uH8M7izke2Yr3uE53AJTu2jhnGntKVPvtp5NfX9SBU6UxTC8HYgFAlqnyQHCtpJjySKcWA8gcZVCA//PeMbzUyvFIHz7g6PZDZJ6vLOtCCerJYfIbZ8FOr7Z1eMz/qqiyCwD+sQ29QWd4E1P7ZwsApYjkTr0nIX1q+iaFSZj4Q4Nv4UQjxJF+7KKEB1qBmeqcrSwRswAK7nX/Tf5im4Ke3dX0OQK6mCILAbajFAThDS0BvE7TSZeZ7xW6+wF2m1kK2KskUyb+sT3/1h9nDkd70O273GcaszwvkEQN4ZwqLk7eUBc8BNrFEHdZNpZmP9lTTe44ewCm46RshtmtpFxXlx+aEBLmJWU66Uy/nYr8jeB72znXVBMJJKTqR0C5GcDFILOSHKfI5tq8dDru3vc2JtvZWZYC8P5SCDfD+EGKfGy2lGKIRJnzxsfMXpMk+Z5GYdrKeRAngQ+DB0Dpmz9PE/JMMrInSOOBxAWfFeL5PZX02WZbhQHobcCEDwj0oBpLNQDzfpLOXdgyQ2oTJriv+Z34ZItJVi5zgdbVNE3ZsLjPAERPgbZ/qJL0NK+J4gDAxwF+Dt7/1MjLagBM/bgFri55c7Bm+leQT9b+Z5IIXPADiHS1WdzzWnUNgMT1gnjn7gpeaZxXGACGq0neRvNPm7EXIlfnhsyyjYzNJTSXUQORPGoM8zZLw9dB5ou0JYDZFMl8g5sroeipDMBZPLiripdXBADoL6DoqQPkEDoDSkfboNQqEHxH4iSwMHy8HewZU/4dirtkVQFMsb2+iLOsen/CnNu2SFan1fQuqh2QILiz3TiYQVQn1Ln6jt1YQmdNgWYA8z6mSAg2taLZSM1sGsRX8pYpri0ATU8Z5aJGwDUByB2m/gScbGtVHoUAzJReJ5sbwtoB5OvZv0W63oWdaAkFzECPsgUcbp67pgB5l/FaNuFwoxKLKWBmJupfNxdc2mptrDlA3km8HYPYAGePyy0Bsu5rdlLNInHugnYLe10A6sF4fRs0AjJtgoeRJlcwCD5vZqep2ISGbnNuAtSjsrIBj5nZgFAebNtGW7xYXwXWE0BgR9xM+q+kI/xUHsfsUSLbiZv3gaUzug4KGPR0l/iD4zF2hOKuIuWa7Cx0zgO8sg29M53hTVlWFfqfaNL/liE60yh8BOQd5zxAFni5FFwPMu/L3jSOTMqediUp34fZk4DtA+XKpUunNmINS6jmMvu4d1048wEPQHzwBYg8QtOvqWXfA/zScgBg+g1PdDi4g4XnmfmOiaTndHf0dOHjdDvjR0vh3UY+DrMfAcnDQHQYRH+RYNTs2b3V5KryQPghgi8WmZP3DdMHh6rpd0dLUZnErkKn0QIASuinvfjDouEhkPWLr3ZzDfb74UpyXVGA7KaDwD1D1eSJ0VL4BMgvZrZXBDBaCj8M4IX8yGymRvvWUCV99Gh/8FWQ94HcenYA7I8G3N85nrw80x39HMQNs238+J5qvIPAvEuCZd1OlwfcJ2hyb3Z7lxkl+UKQxj+00zjlLwjuAfjlViAG/HK4Et96rB+DqUQLbvAMeJ2wQ4AdHKqkzx0pRfsE9k0D8hsLguOBxfcOjuFYc5KWBbBU7RoQjpaCa0DeAsPtJC8EbMLUPjk8lv4p73AD4e8IXjub1WfE7KHdY8nhpWy3e39WARqdZDDHtof7Bo8nIwSS2rsRIOroDz7qmb40VMXxdxt4bd6qAaw0sKLzNwCKZmq1xm0osFqZLWp3Q4GimVqtcee9Av8DAnkTbS4epvYAAAAASUVORK5CYII=">
+          Framebuffer用法
+        </h1>  <div class="theme-vdoing-content content__default"><h1 id="framebuffer介绍"><a href="#framebuffer介绍" class="header-anchor">#</a> Framebuffer介绍</h1> <p>opengl中framebuffer称为帧缓冲，它是一个内存缓冲区，如果把渲染到屏幕的颜色缓冲，深度缓冲，模板缓冲都缓存到内存中，那么就叫帧缓冲。</p> <h2 id="framebuffer用法"><a href="#framebuffer用法" class="header-anchor">#</a> Framebuffer用法</h2> <p>framebuffer通常用在离屏渲染或者后处理上，主要涉及这几个函数：</p> <ul><li><code>glGenFramebuffers</code> ：创建framebuffer</li> <li><code>glBindFramebuffer</code> ：绑定framebuffer</li> <li><code>glFramebufferTexture2D</code> ：将纹理附加到framebuffer到，实现绘制到纹理</li></ul> <h2 id="示例代码"><a href="#示例代码" class="header-anchor">#</a> 示例代码</h2> <p>我们模拟一个后处理操作，将<a href="http://iogl.cn/opengl/blend/" target="_blank" rel="nofollow noopener noreferrer">Blend用法<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>中的绘制结果画在屏幕中央，并且对结果的颜色取反向，让我们看看具体代码：</p> <p><code>05.FBTexture.fs</code>内容：</p> <div class="language-glsl line-numbers-mode"><pre class="language-glsl"><code><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">version</span> <span class="token expression"><span class="token number">330</span> core</span></span>
+<span class="token keyword">in</span> <span class="token keyword">vec2</span> TexCoord<span class="token punctuation">;</span>
+<span class="token keyword">uniform</span> <span class="token keyword">sampler2D</span> tex1<span class="token punctuation">;</span>
+<span class="token keyword">out</span> <span class="token keyword">vec4</span> FragColor<span class="token punctuation">;</span>
+<span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+    FragColor <span class="token operator">=</span> <span class="token keyword">vec4</span><span class="token punctuation">(</span><span class="token keyword">vec3</span><span class="token punctuation">(</span><span class="token number">1.0</span> <span class="token operator">-</span> <span class="token function">texture</span><span class="token punctuation">(</span>tex1<span class="token punctuation">,</span> TexCoord<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br></div></div><p>实现代码：</p> <div class="language-c++ line-numbers-mode"><pre class="language-text"><code>void display( GLFWwindow* window )
+{
+    // 1.绑定framebuffer，这样可以绘制到附加的纹理fbTexture上
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glClearColor( 0, 0, 0.4, 0 );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glUseProgram(boxProgramID);
+
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) 5 / (float)5, 0.1f, 100.0f);
+    glm::mat4 view = glm::lookAt(glm::vec3(1,2,3), glm::vec3(0,0,0), glm::vec3(0,1,0));
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 mvp = projection * view * model;
+
+    // 2.画地面
+    GLuint mvpId = glGetUniformLocation(boxProgramID, &quot;MVP&quot;);
+    glUniformMatrix4fv(mvpId, 1, GL_FALSE, &amp;mvp[0][0]);
+    glBindVertexArray(FloorVAO);
+    glBindTexture(GL_TEXTURE_2D, floorTexture);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // 3.画立方体
+    glBindVertexArray(VAO);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // 4.画blend物体
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0, 0, 1.01f));
+    mvp = projection * view * model;
+    glUniformMatrix4fv(mvpId, 1, GL_FALSE, &amp;mvp[0][0]);
+    glBindTexture(GL_TEXTURE_2D, blendTexture);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    
+    // 5.对fbTexture采样后处理将绘制到屏幕
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(screenProgramID);
+    glBindVertexArray(screenVAO);
+    glBindTexture(GL_TEXTURE_2D, fbTexture);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void prepare() {
+    boxProgramID = LoadShaders( &quot;data/shader/03.MVP.vs&quot;, &quot;data/shader/03.MVP.fs&quot; );
+
+    const GLfloat g_vertex_buffer_data[] = {
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
+
+    float fllor_vertex_buffer_data[] = {
+            5.0f, -0.5f,  5.0f,  1.0f, 0.0f,
+            -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
+            -5.0f, -0.5f, -5.0f,  0.0f, 1.0f,
+
+            5.0f, -0.5f,  5.0f,  1.0f, 0.0f,
+            -5.0f, -0.5f, -5.0f,  0.0f, 1.0f,
+            5.0f, -0.5f, -5.0f,  1.0f, 1.0f
+    };
+    float blend_vertex_buffer_data[] = {
+            0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+            0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
+            1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+
+            0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+            1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+            1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+    };
+
+    // 1.VAO、VBO的数据
+    glGenVertexArrays(1, &amp;VAO);
+    glBindVertexArray(VAO);
+    GLuint VBO1;
+    glGenBuffers(1, &amp;VBO1);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+    // 纹理坐标
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+
+    // 2.地面贴图
+    glGenVertexArrays(1, &amp;FloorVAO);
+    glBindVertexArray(FloorVAO);
+    GLuint VBO2;
+    glGenBuffers(1, &amp;VBO2);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(fllor_vertex_buffer_data), fllor_vertex_buffer_data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+    // 纹理坐标
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+
+    // 3.blend贴图
+    glGenVertexArrays(1, &amp;BlendVAO);
+    glBindVertexArray(BlendVAO);
+    GLuint VBO3;
+    glGenBuffers(1, &amp;VBO3);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO3);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(blend_vertex_buffer_data), blend_vertex_buffer_data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+    // 纹理坐标
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+
+    // 纹理数据
+    floorTexture = loadTexture(&quot;data/img/33.png&quot;);
+    texture = loadTexture(&quot;data/img/11.jpg&quot;);
+    blendTexture = loadTexture(&quot;data/img/chick.png&quot;);
+
+
+    // 4.创建framebuffer以及附加的纹理
+    glGenFramebuffers(1, &amp;framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glGenTextures(1, &amp;fbTexture);
+    glBindTexture(GL_TEXTURE_2D, fbTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 512, 512, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbTexture, 0);
+
+    // 5.绘制到屏幕的shader和顶点数据
+    screenProgramID = LoadShaders( &quot;data/shader/02.Texture.vs&quot;, &quot;data/shader/05.FBTexture.fs&quot; );
+
+    const GLfloat g_screen_vertex_buffer_data[] = {
+            -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f,  0.0f,  0.0f,  0.0f,
+            0.5f, -0.5f,  0.0f,   1.0f,  0.0f,
+
+            -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+            0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+            0.5f,  0.5f,  0.0f,  1.0f,  1.0f
+    };
+
+    // VAO、VBO的数据
+    GLuint screenVBO;
+    glGenVertexArrays(1, &amp;screenVAO);
+    glBindVertexArray(screenVAO);
+    glGenBuffers(1, &amp;screenVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(g_screen_vertex_buffer_data), g_screen_vertex_buffer_data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br><span class="line-number">130</span><br><span class="line-number">131</span><br><span class="line-number">132</span><br><span class="line-number">133</span><br><span class="line-number">134</span><br><span class="line-number">135</span><br><span class="line-number">136</span><br><span class="line-number">137</span><br><span class="line-number">138</span><br><span class="line-number">139</span><br><span class="line-number">140</span><br><span class="line-number">141</span><br><span class="line-number">142</span><br><span class="line-number">143</span><br><span class="line-number">144</span><br><span class="line-number">145</span><br><span class="line-number">146</span><br><span class="line-number">147</span><br><span class="line-number">148</span><br><span class="line-number">149</span><br><span class="line-number">150</span><br><span class="line-number">151</span><br><span class="line-number">152</span><br><span class="line-number">153</span><br><span class="line-number">154</span><br><span class="line-number">155</span><br><span class="line-number">156</span><br><span class="line-number">157</span><br><span class="line-number">158</span><br><span class="line-number">159</span><br><span class="line-number">160</span><br><span class="line-number">161</span><br><span class="line-number">162</span><br><span class="line-number">163</span><br><span class="line-number">164</span><br><span class="line-number">165</span><br><span class="line-number">166</span><br><span class="line-number">167</span><br><span class="line-number">168</span><br><span class="line-number">169</span><br><span class="line-number">170</span><br><span class="line-number">171</span><br><span class="line-number">172</span><br><span class="line-number">173</span><br><span class="line-number">174</span><br><span class="line-number">175</span><br><span class="line-number">176</span><br><span class="line-number">177</span><br><span class="line-number">178</span><br><span class="line-number">179</span><br><span class="line-number">180</span><br><span class="line-number">181</span><br><span class="line-number">182</span><br><span class="line-number">183</span><br><span class="line-number">184</span><br><span class="line-number">185</span><br><span class="line-number">186</span><br><span class="line-number">187</span><br><span class="line-number">188</span><br><span class="line-number">189</span><br><span class="line-number">190</span><br><span class="line-number">191</span><br><span class="line-number">192</span><br><span class="line-number">193</span><br><span class="line-number">194</span><br><span class="line-number">195</span><br></div></div><p>最终显示结果：</p> <p><img src="/assets/img/1640529248087.e2fabf1d.png" alt="1640529248087"></p></div></div>  <div class="page-edit"><!----> <div class="tags"><a href="/tags/?tag=opengl%E5%9F%BA%E7%A1%80" title="标签">#opengl基础</a><a href="/tags/?tag=framebuffer" title="标签">#framebuffer</a></div> <div class="last-updated"><span class="prefix">Last Update:</span> <span class="time">2021/12/26, 22:35:58</span></div></div> <div class="page-nav-wapper"><!----> <div class="page-nav"><p class="inner"><span class="prev">
+        ←
+        <a href="/opengl/blend/" class="prev">Blend用法</a></span> <span class="next"><a href="/physics/resource/">收集的物理引擎资源</a>→
+      </span></p></div></div></div> <!----></main></div> <div class="footer"><div class="icons"><a href="https://github.com/sumcai" title="GitHub" target="_blank" class="iconfont icon-github"></a></div> 
+  Theme by
+  <a href="https://github.com/xugaoyi/vuepress-theme-vdoing" target="_blank" title="本站主题">Vdoing</a> 
+    | Copyright © 2021-2022
+    <span></span></div> <div class="buttons"><div title="返回顶部" class="button blur go-to-top iconfont icon-smctop1" style="display:none;"></div> <div title="切换主题" class="button blur theme-mode-but iconfont icon-smcyue1"></div></div> <!----> <!----> <!----></div><div class="global-ui"><div></div></div></div>
+<script src="/assets/js/app.29891e4d.js" defer></script><script src="/assets/js/2.a7472eed.js" defer></script><script src="/assets/js/4.705083b4.js" defer></script><script src="/assets/js/29.0c6214c9.js" defer></script>
+</body>
+</html>

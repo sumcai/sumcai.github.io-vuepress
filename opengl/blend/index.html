@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blend用法 | IOGL</title>
+<meta name="generator" content="VuePress 1.8.0">
+<link rel="icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-alpha/dist/katex.min.css">
+    <link rel="stylesheet" href="https://at.alicdn.com/t/font_2937112_484nc9f03bi.css">
+<meta name="description" content="这里将深入探讨相关技术，包括行业动态，架构设计，设计模式，框架使用，源码分析等。">
+    <meta name="image" content="http://www.iogl.cn/assets/1639699366516.png">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Blend用法">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="http://www.iogl.cn/assets/1639699366516.png">
+    <meta property="og:url" content="http://www.iogl.cn/02.%E7%AC%94%E8%AE%B0/01.OpenGL%E6%8A%80%E6%9C%AF/08.Blend%E7%94%A8%E6%B3%95.html">
+    <meta property="og:site_name" content="iogl.cn">
+    <meta property="article:published_time" content="2021-12-16T22:29:30.000Z">
+    <meta property="article:tag" content="opengl基础">
+    <meta itemprop="name" content="Blend用法">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://www.iogl.cn/assets/1639699366516.png">
+    <meta name="keywords" content="个人技术博客,算法,数据结构">
+    <meta name="theme-color" content="#11a8cd">
+<link rel="preload" href="/assets/css/0.styles.b17c35c4.css" as="style"><link rel="preload" href="/assets/js/app.29891e4d.js" as="script"><link rel="preload" href="/assets/js/2.a7472eed.js" as="script"><link rel="preload" href="/assets/js/4.705083b4.js" as="script"><link rel="preload" href="/assets/js/24.7ba59bf4.js" as="script">
+<link rel="stylesheet" href="/assets/css/0.styles.b17c35c4.css">
+</head>
+<body class="theme-mode-light">
+<div id="app" data-server-rendered="true"><div class="theme-container sidebar-open have-rightmenu"><header class="navbar blur"><div title="目录" class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/img/avatar.png" alt="IOGL" class="logo"> <span class="site-name can-hide"></span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">🏠首页</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="📚笔记" class="dropdown-title"><a href="/site/note/" class="link-title">📚笔记</a> <span class="title" style="display:none;">📚笔记</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/opengl/" class="nav-link router-link-active">OpenGL技术</a></li><li class="dropdown-item"><!----> <a href="/vulkan/" class="nav-link">Vulkan技术</a></li><li class="dropdown-item"><!----> <a href="/physics/" class="nav-link">物理引擎技术</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="📖教程" class="dropdown-title"><a href="/site/tutorial/" class="link-title">📖教程</a> <span class="title" style="display:none;">📖教程</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/site/tutorial/learnopengl/" class="nav-link">OpenGL中文教程</a></li></ul></div></div><div class="nav-item"><a href="/site/tips/" class="nav-link">✏️碎片</a></div><div class="nav-item"><a href="/site/msgboard/" class="nav-link">📋留言板</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="🧭导航" class="dropdown-title"><a href="/archives/" class="link-title">🧭导航</a> <span class="title" style="display:none;">🧭导航</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/categories/" class="nav-link">📂分类</a></li><li class="dropdown-item"><!----> <a href="/tags/" class="nav-link">🔖标签</a></li><li class="dropdown-item"><!----> <a href="/archives/" class="nav-link">⌚时间线</a></li><li class="dropdown-item"><!----> <a href="/site/favorite/" class="nav-link">❤️本站收藏</a></li><li class="dropdown-item"><!----> <a href="/site/friend/" class="nav-link">🔗友情链接</a></li></ul></div></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <div class="sidebar-hover-trigger"></div> <aside class="sidebar" style="display:none;"><div class="blogger"><img src="/img/avatar.jpg"> <div class="blogger-info"><h3>sumcai's blog</h3> <span></span></div></div> <nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">🏠首页</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="📚笔记" class="dropdown-title"><a href="/site/note/" class="link-title">📚笔记</a> <span class="title" style="display:none;">📚笔记</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/opengl/" class="nav-link router-link-active">OpenGL技术</a></li><li class="dropdown-item"><!----> <a href="/vulkan/" class="nav-link">Vulkan技术</a></li><li class="dropdown-item"><!----> <a href="/physics/" class="nav-link">物理引擎技术</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="📖教程" class="dropdown-title"><a href="/site/tutorial/" class="link-title">📖教程</a> <span class="title" style="display:none;">📖教程</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/site/tutorial/learnopengl/" class="nav-link">OpenGL中文教程</a></li></ul></div></div><div class="nav-item"><a href="/site/tips/" class="nav-link">✏️碎片</a></div><div class="nav-item"><a href="/site/msgboard/" class="nav-link">📋留言板</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="🧭导航" class="dropdown-title"><a href="/archives/" class="link-title">🧭导航</a> <span class="title" style="display:none;">🧭导航</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/categories/" class="nav-link">📂分类</a></li><li class="dropdown-item"><!----> <a href="/tags/" class="nav-link">🔖标签</a></li><li class="dropdown-item"><!----> <a href="/archives/" class="nav-link">⌚时间线</a></li><li class="dropdown-item"><!----> <a href="/site/favorite/" class="nav-link">❤️本站收藏</a></li><li class="dropdown-item"><!----> <a href="/site/friend/" class="nav-link">🔗友情链接</a></li></ul></div></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>OpenGL技术</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/opengl/resource/" class="sidebar-link">收集的OpenGL资源</a></li><li><a href="/opengl/env/" class="sidebar-link">搭建OpenGL开发环境</a></li><li><a href="/opengl/vertex/" class="sidebar-link">浅谈VAO、VBO、VEO</a></li><li><a href="/opengl/coordinate/" class="sidebar-link">OpenGL中的坐标系统</a></li><li><a href="/opengl/texture/" class="sidebar-link">OpenGL纹理</a></li><li><a href="/opengl/mvp/" class="sidebar-link">MVP变换坐标</a></li><li><a href="/opengl/stencil/" class="sidebar-link">Stencil用法</a></li><li><a href="/opengl/blend/" aria-current="page" class="active sidebar-link">Blend用法</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/opengl/blend/#blend开启方法" class="sidebar-link">blend开启方法</a></li><li class="sidebar-sub-header"><a href="/opengl/blend/#示例代码" class="sidebar-link">示例代码</a></li></ul></li><li><a href="/opengl/framebuffer/" class="sidebar-link">Framebuffer用法</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>物理引擎技术</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Vulkan技术</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <div><main class="page"><div class="theme-vdoing-wrapper "><div class="articleInfo-wrap" data-v-0aeb3626><div class="articleInfo" data-v-0aeb3626><ul class="breadcrumbs" data-v-0aeb3626><li data-v-0aeb3626><a href="/" title="首页" class="iconfont icon-home router-link-active" data-v-0aeb3626></a></li> <li data-v-0aeb3626><a href="/site/note" title="笔记-目录页" data-v-0aeb3626>笔记</a></li> <li data-v-0aeb3626><a href="/site/note/#OpenGL技术" title="笔记#OpenGL技术" data-v-0aeb3626>OpenGL技术</a></li> <!----></ul> <div class="info" data-v-0aeb3626><div title="作者" class="author iconfont icon-touxiang" data-v-0aeb3626><a href="https://github.com/sumcai" target="_blank" title="作者" class="beLink" data-v-0aeb3626>sumcai</a></div> <div title="创建时间" class="date iconfont icon-riqi" data-v-0aeb3626><a href="javascript:;" data-v-0aeb3626>2021-12-16</a></div> <div title="统计" class="date iconfont icon-smceye1" data-v-0aeb3626><span id="/opengl/blend" data-flag-title="Blend用法" class="leancloud_visitors" data-v-0aeb3626><a class="leancloud-visitors-count" data-v-0aeb3626></a></span></div> <!----></div></div></div> <!----> <div class="content-wrapper"><div class="right-menu-wrapper"><div class="right-menu-margin"><div class="right-menu-content"></div></div></div> <h1><img src="data:image/png;base64,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">
+          Blend用法
+        </h1>  <div class="theme-vdoing-content content__default"><h1 id="blend用法"><a href="#blend用法" class="header-anchor">#</a> Blend用法</h1> <p>opengl的blend用于颜色混合 ，如果不用混合，两张贴图贴在一起时，前面的贴图会覆盖后面的贴图，加上混合功能，两张贴图可以很好的贴合在一起。用代码演示一下用法。</p> <h2 id="blend开启方法"><a href="#blend开启方法" class="header-anchor">#</a> blend开启方法</h2> <p>blend主要使用下面几个函数：</p> <ul><li><code>glEnable(GL_BLEND)</code>: 开启blend功能</li> <li><code>glBlendFunc(GLenum sfactor, GLenum dfactor)</code>: sfactor源因子，dfactor目标因子</li></ul> <h2 id="示例代码"><a href="#示例代码" class="header-anchor">#</a> 示例代码</h2> <p>我们先画一个普通场景</p> <div class="language-c++ line-numbers-mode"><pre class="language-text"><code>void display( GLFWwindow* window )
+{
+    glClearColor( 0, 0, 0.4, 0 );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glUseProgram(boxProgramID);
+
+
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) 5 / (float)5, 0.1f, 100.0f);
+    glm::mat4 view = glm::lookAt(glm::vec3(1,2,3), glm::vec3(0,0,0), glm::vec3(0,1,0));
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 mvp = projection * view * model;
+
+    // 1.画地面
+    GLuint mvpId = glGetUniformLocation(boxProgramID, &quot;MVP&quot;);
+    glUniformMatrix4fv(mvpId, 1, GL_FALSE, &amp;mvp[0][0]);
+    glBindVertexArray(FloorVAO);
+    glBindTexture(GL_TEXTURE_2D, floorTexture);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // 2.画立方体
+    glBindVertexArray(VAO);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // 3.画blend物体
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0, 0, 1.01f));
+    mvp = projection * view * model;
+    glUniformMatrix4fv(mvpId, 1, GL_FALSE, &amp;mvp[0][0]);
+    glBindTexture(GL_TEXTURE_2D, blendTexture);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void prepare() {
+    boxProgramID = LoadShaders( &quot;data/shader/03.MVP.vs&quot;, &quot;data/shader/03.MVP.fs&quot; );
+
+    const GLfloat g_vertex_buffer_data[] = {
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
+
+    float fllor_vertex_buffer_data[] = {
+            5.0f, -0.5f,  5.0f,  1.0f, 0.0f,
+            -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
+            -5.0f, -0.5f, -5.0f,  0.0f, 1.0f,
+
+            5.0f, -0.5f,  5.0f,  1.0f, 0.0f,
+            -5.0f, -0.5f, -5.0f,  0.0f, 1.0f,
+            5.0f, -0.5f, -5.0f,  1.0f, 1.0f
+    };
+    float blend_vertex_buffer_data[] = {
+            0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+            0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
+            1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+
+            0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+            1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+            1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+    };
+
+    // 1.VAO1、VBO的数据
+    glGenVertexArrays(1, &amp;VAO);
+    glBindVertexArray(VAO);
+    GLuint VBO1;
+    glGenBuffers(1, &amp;VBO1);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+    // 纹理坐标
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+
+    // 2.地面贴图
+    glGenVertexArrays(1, &amp;FloorVAO);
+    glBindVertexArray(FloorVAO);
+    GLuint VBO2;
+    glGenBuffers(1, &amp;VBO2);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(fllor_vertex_buffer_data), fllor_vertex_buffer_data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+    // 纹理坐标
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+
+    // 2.blend贴图
+    glGenVertexArrays(1, &amp;BlendVAO);
+    glBindVertexArray(BlendVAO);
+    GLuint VBO3;
+    glGenBuffers(1, &amp;VBO3);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO3);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(blend_vertex_buffer_data), blend_vertex_buffer_data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+    // 纹理坐标
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+
+    // 纹理数据
+    floorTexture = loadTexture(&quot;data/img/33.png&quot;);
+    texture = loadTexture(&quot;data/img/11.jpg&quot;);
+    blendTexture = loadTexture(&quot;data/img/chick.png&quot;);
+
+    glEnable(GL_DEPTH_TEST);
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br><span class="line-number">130</span><br><span class="line-number">131</span><br><span class="line-number">132</span><br><span class="line-number">133</span><br><span class="line-number">134</span><br><span class="line-number">135</span><br><span class="line-number">136</span><br><span class="line-number">137</span><br><span class="line-number">138</span><br><span class="line-number">139</span><br><span class="line-number">140</span><br><span class="line-number">141</span><br><span class="line-number">142</span><br><span class="line-number">143</span><br><span class="line-number">144</span><br><span class="line-number">145</span><br><span class="line-number">146</span><br></div></div><p>都是普通贴图操作，显示效果如下：</p> <p><img src="/assets/img/1639699366516.8fdf692c.png" alt="1639699366516"></p> <p>因为是直接贴图覆盖的，所以小鸡周边alpha为0的颜色显示为黑色，如果加上blend功能，则可以看到后面图片的内容了：</p> <div class="language-c++ line-numbers-mode"><pre class="language-text"><code>glEnable(GL_BLEND);
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br></div></div><p>最终显示效果：</p> <p><img src="/assets/img/1639699653817.3eddf9c3.png" alt="1639699653817"></p></div></div>  <div class="page-edit"><!----> <div class="tags"><a href="/tags/?tag=opengl%E5%9F%BA%E7%A1%80" title="标签">#opengl基础</a><a href="/tags/?tag=blend" title="标签">#blend</a></div> <div class="last-updated"><span class="prefix">Last Update:</span> <span class="time">2021/12/26, 22:35:58</span></div></div> <div class="page-nav-wapper"><!----> <div class="page-nav"><p class="inner"><span class="prev">
+        ←
+        <a href="/opengl/stencil/" class="prev">Stencil用法</a></span> <span class="next"><a href="/opengl/framebuffer/">Framebuffer用法</a>→
+      </span></p></div></div></div> <!----></main></div> <div class="footer"><div class="icons"><a href="https://github.com/sumcai" title="GitHub" target="_blank" class="iconfont icon-github"></a></div> 
+  Theme by
+  <a href="https://github.com/xugaoyi/vuepress-theme-vdoing" target="_blank" title="本站主题">Vdoing</a> 
+    | Copyright © 2021-2022
+    <span></span></div> <div class="buttons"><div title="返回顶部" class="button blur go-to-top iconfont icon-smctop1" style="display:none;"></div> <div title="切换主题" class="button blur theme-mode-but iconfont icon-smcyue1"></div></div> <!----> <!----> <!----></div><div class="global-ui"><div></div></div></div>
+<script src="/assets/js/app.29891e4d.js" defer></script><script src="/assets/js/2.a7472eed.js" defer></script><script src="/assets/js/4.705083b4.js" defer></script><script src="/assets/js/24.7ba59bf4.js" defer></script>
+</body>
+</html>
